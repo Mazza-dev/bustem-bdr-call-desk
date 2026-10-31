@@ -1,0 +1,52 @@
+{
+  "callEnded": {
+    "eventId": "ended:parley:rec-example",
+    "type": "call.ended",
+    "callId": "6e7055d8-57a0-4f7e-ae50-80b576c76a2b",
+    "recordingId": "rec-example",
+    "source": "parley",
+    "account": "Example Brand",
+    "rep": "Example BDR",
+    "contact": "",
+    "contactEmail": "buyer@example.com",
+    "hubspotContactId": "",
+    "endedAt": "2026-10-31T11:00:00.000Z",
+    "durationMs": 180000
+  },
+  "callApproved": {
+    "eventId": "approved:6e7055d8-57a0-4f7e-ae50-80b576c76a2b:1",
+    "type": "call.approved",
+    "callId": "6e7055d8-57a0-4f7e-ae50-80b576c76a2b",
+    "recordingId": "rec-example",
+    "source": "parley",
+    "account": "Example Brand",
+    "rep": "Example BDR",
+    "contact": "",
+    "contactEmail": "buyer@example.com",
+    "hubspotContactId": "",
+    "endedAt": "2026-10-31T11:00:00.000Z",
+    "durationMs": 180000,
+    "outcome": "follow_up",
+    "issue": "Prospect said customers saw a fake checkout.",
+    "objection": "Needs to confirm scope with ecommerce lead.",
+    "decisionMaker": "Head of ecommerce",
+    "nextStep": "Send the free scan and follow up Tuesday.",
+    "reviewedAt": "2026-10-31T11:10:00.000Z"
+  },
+  "reportReady": {
+    "eventId": "report:2026-10-31",
+    "type": "report.ready",
+    "date": "2026-10-31",
+    "timeZone": "Africa/Johannesburg",
+    "capturedCalls": 1,
+    "reviewedCalls": 1,
+    "pendingReview": 0,
+    "meetingsBooked": 0,
+    "followUps": 1,
+    "notFit": 0,
+    "objections": [{ "name": "needs to confirm scope with ecommerce lead.", "count": 1 }],
+    "handoffs": [],
+    "dials": null,
+    "dialsNote": "Dial totals need the dialer or CRM. A recording count is not a dial count."
+  }
+}

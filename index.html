@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bustem Call Desk · Tolani Lambe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand"><span class="mark">B</span><span>Bustem Call Desk</span></div>
+      <div class="head-right"><span id="mode" class="mode">Checking connection</span><span class="byline">GTM demo by Tolani Lambe</span></div>
+    </header>
+
+    <div class="intro">
+      <div><span class="eyebrow">CALL SUPPORT / REPORTING</span><h1>BDR call companion</h1></div>
+      <p>Help a BDR ask the right questions during a brand protection call. When the call ends, prepare a CRM update and keep Oliver’s daily view current.</p>
+    </div>
+
+    <div class="banner">This walkthrough uses a fictional brand and scripted call. It is not connected to Bustem, Parley, Make, or HubSpot on the public page.</div>
+
+    <div class="layout">
+      <section class="panel call-panel">
+        <div class="section-head"><div><span class="eyebrow">01 / DURING THE CALL</span><h2>Rep view</h2></div><span id="callState" class="pill">Ready</span></div>
+        <div class="account"><span>ACCOUNT</span><strong>Oakline Goods</strong><small>Fictional ecommerce brand</small></div>
+        <div class="context"><span>BEFORE THE CALL</span><p>Customers have reported a lookalike checkout. Confirm whether the issue is still active, who owns it, and whether a free scan would help.</p></div>
+        <div class="call-feed" id="transcript"><p class="empty">Start the sample call to see the transcript and coaching prompts.</p></div>
+        <div class="cue"><span>USEFUL NEXT QUESTION</span><p id="cueText">Ask what the brand is seeing today.</p></div>
+        <div class="actions"><button id="startCall">Start sample call</button><button id="nextLine" class="secondary" disabled>Next moment</button><button id="endCall" class="secondary" disabled>End call</button></div>
+      </section>
+
+      <section class="panel review-panel">
+        <div class="section-head"><div><span class="eyebrow">02 / AFTER THE CALL</span><h2>Rep review</h2></div><span class="pill">Approval required</span></div>
+        <p class="section-copy">A finished call appears here. The rep confirms the outcome before detailed notes are sent to Make for HubSpot.</p>
+        <div id="reviewEmpty" class="placeholder">Finish the sample call or import a Parley recording on the local server.</div>
+        <form id="reviewForm" hidden>
+          <div class="recording-title" id="reviewTitle"></div>
+          <label>Account <input id="account" required></label>
+          <label>Rep <input id="rep" required></label>
+          <label>Contact email <input id="contactEmail" type="email" placeholder="Only if verified by the rep"></label>
+          <label>What the brand said <textarea id="issue" rows="2" placeholder="Use the prospect's words"></textarea></label>
+          <label>Decision maker <input id="decisionMaker" placeholder="If confirmed"></label>
+          <label>Objection <input id="objection" placeholder="If one came up"></label>
+          <label>Outcome <select id="outcome"><option value="meeting_booked">Meeting booked</option><option value="follow_up">Follow up</option><option value="not_fit">Not a fit</option><option value="no_answer">No answer</option><option value="other">Other</option></select></label>
+          <label>Agreed next step <textarea id="nextStep" rows="2"></textarea></label>
+          <button type="submit">Approve call note</button><p id="reviewMessage" class="form-message"></p>
+        </form>
+      </section>
+    </div>
+
+    <section class="panel report-panel">
+      <div class="section-head"><div><span class="eyebrow">03 / ALWAYS READY</span><h2>Oliver’s view</h2></div><button id="sendReport" class="secondary">Preview current report</button></div>
+      <div class="stats" id="stats"></div>
+      <div class="report-grid"><div><h3>Meeting handoffs</h3><div id="handoffs" class="list"></div></div><div><h3>What needs attention</h3><div id="attention" class="list"></div></div></div>
+      <div class="report-text-wrap"><span class="eyebrow">REPORT TEXT</span><pre id="reportText" class="report-text"></pre></div>
+      <p class="fine">Dial totals come from the dialer or CRM. Call recordings alone cannot establish how many numbers were dialed.</p>
+    </section>
+
+    <section class="panel events-panel">
+      <div class="section-head"><div><span class="eyebrow">04 / AUTOMATION</span><h2>Make handoff</h2></div><span id="makeStatus" class="pill">Preview only</span></div>
+      <p class="section-copy">A call ended event is created immediately. Rep approved notes and the daily report are separate events. Make can route them to HubSpot and Oliver’s preferred reporting channel.</p>
+      <div id="events" class="events"></div>
+      <p class="fine">The public demo stores examples in this browser. Run the local server and configure a private Make webhook to send real events.</p>
+    </section>
+    <footer><span>Built by Tolani Lambe as a working Bustem application sample.</span><a href="https://github.com/Mazza-dev/bustem-bdr-call-desk" target="_blank" rel="noopener">View code ↗</a></footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
