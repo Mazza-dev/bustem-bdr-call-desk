@@ -25,7 +25,8 @@ test('Parley watcher imports a completed Bustem recording', async t => {
     if (rpc.params?.name === 'get_recording') result = {
       content: [{ type: 'text', text: JSON.stringify({
         id: 'rec-a', title: 'Bustem | Example Brand', createdAt: Date.now(), durationMs: 120000,
-        transcript: '[0:00] [Buyer] Our fake checkout is live.', brief: 'Buyer discussed a fake site.'
+        transcript: '[0:00] [Buyer] Our fake checkout is live.', brief: 'Buyer discussed a fake site.',
+        meetingContext: 'Contact email: buyer@example.com\nHubSpot contact ID: 12345'
       }) }]
     };
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -55,5 +56,7 @@ test('Parley watcher imports a completed Bustem recording', async t => {
   assert.equal(call.source, 'parley');
   assert.equal(call.account, 'Example Brand');
   assert.equal(call.rep, 'Example BDR');
+  assert.equal(call.contactEmail, 'buyer@example.com');
+  assert.equal(call.hubspotContactId, '12345');
   assert.match(call.transcript, /fake checkout/);
 });

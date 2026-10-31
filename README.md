@@ -12,7 +12,7 @@ The public demo uses a fictional brand and browser storage. It never sends data 
 2. Run `npm start` and open `http://127.0.0.1:8787`.
 3. Walk through the sample call. The local server creates `call.ended`, `call.approved`, and `report.ready` events in its outbox.
 4. To send events to Make, add a private custom webhook URL to `MAKE_WEBHOOK_URL`. Add `MAKE_WEBHOOK_KEY` if the Make webhook requires an API key. Demo events remain previews unless `ALLOW_DEMO_WEBHOOK=true`.
-5. To import completed calls from Parley, leave Parley open and run `npm run parley` in a second terminal. The watcher reads its local MCP endpoint and imports recordings whose titles begin with `Bustem`. Name them `Bustem | Brand name`. You can instead set `PARLEY_FOLDER_ID`.
+5. To import completed calls from Parley, leave Parley open and run `npm run parley` in a second terminal. The watcher reads its local MCP endpoint and imports recordings whose titles begin with `Bustem`. Name them `Bustem | Brand name`. You can instead set `PARLEY_FOLDER_ID`. If the rep has verified them, Parley's meeting context can include `Contact email: buyer@brand.com` and `HubSpot contact ID: 12345`, each on its own line. Those fields allow the immediate Make event to attach to the right HubSpot record.
 
 The watcher does not record audio itself. It reads Parley's finished recordings through `list_recordings` and `get_recording`. Parley remains a separate app. The browser example is scripted because no customer calls belong in a public demo.
 

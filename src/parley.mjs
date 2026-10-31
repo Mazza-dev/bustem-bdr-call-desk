@@ -31,6 +31,9 @@ async function poll() {
     const recording = await mcp('tools/call', { name: 'get_recording', arguments: { id: item.id } });
     if (!recording.transcript?.trim()) continue;
     const account = String(recording.title || '').replace(new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*[|:]?\\s*`, 'i'), '').trim();
+    const context = String(recording.meetingContext || '');
+    const contactEmail = context.match(/^Contact email:\s*([^\s]+@[^\s]+)$/im)?.[1] || '';
+    const hubspotContactId = context.match(/^HubSpot contact ID:\s*([A-Za-z0-9]+)$/im)?.[1] || '';
     const response = await fetch(`${desk}/api/calls`, {
       method: 'POST', signal: AbortSignal.timeout(12000),
       headers: {
@@ -41,7 +44,7 @@ async function poll() {
         source: 'parley', sourceId: recording.id, account: account || 'Account to confirm',
         title: recording.title, createdAt: recording.createdAt,
         durationMs: recording.durationMs, transcript: recording.transcript,
-        parleyBrief: recording.brief || '', rep
+        parleyBrief: recording.brief || '', rep, contactEmail, hubspotContactId
       })
     });
     if (!response.ok) throw new Error(`Call Desk returned ${response.status}: ${await response.text()}`);
