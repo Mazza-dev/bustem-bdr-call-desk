@@ -47,6 +47,7 @@
     "objections": [{ "name": "needs to confirm scope with ecommerce lead.", "count": 1 }],
     "handoffs": [],
     "dials": null,
-    "dialsNote": "Dial totals need the dialer or CRM. A recording count is not a dial count."
+    "dialsNote": "Dial totals need the dialer or CRM. A recording count is not a dial count.",
+    "message": "Bustem BDR report for 2026-10-31 (Johannesburg)\nCalls captured: 1. Rep reviewed: 1. Awaiting review: 0.\nMeetings booked: 0. Follow ups: 1. Not a fit: 0.\nObjections: needs to confirm scope with ecommerce lead. (1)\nMeeting handoffs:\nNone confirmed.\nDial totals: unavailable until the dialer is connected."
   }
 }

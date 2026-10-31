@@ -1,20 +1,28 @@
-# Bustem Call Desk
+# Bustem GTM 2: BDR call operations
 
-A working GTM demo by Tolani Lambe for the South Africa BDR team. It shows a call prompt during a fictional brand protection conversation, records a finished call, gives the rep a short review form, and keeps Oliver's daily report current. The page opens directly to the tool.
+A working repo by Tolani Lambe for Bustem's South Africa BDR team. It contains the call workflow, a Parley recording adapter, a Make webhook sender, a daily report, and the handoff material needed to adapt it to Bustem's tools. It uses fictional data by default.
 
-**[Try the browser demo](https://mazza-dev.github.io/bustem-bdr-call-desk/)**
+## What happens
 
-The public demo uses a fictional brand and browser storage. It never sends data to Bustem, Make, or HubSpot.
+1. A BDR keeps discovery questions and next steps in view during a call. The sample walks through a fictional call.
+2. When a completed `Bustem` recording appears in Parley, the local adapter imports it and creates `call.ended`. The webhook sender can pass this event to Make immediately.
+3. Make can match a verified contact in HubSpot and create a call activity. Unmatched calls go to review instead of creating an unverified contact.
+4. The BDR checks the account, objection, outcome, and next step. Approval creates `call.approved`, which Make can use to update the HubSpot call and create a follow up task.
+5. Oliver's report updates from reviewed calls throughout the day. At 18:00 Johannesburg time, the running server creates `report.ready` for Make to deliver through the team's chosen channel.
+
+The [workflow template](workflow-template.json) names the events, required fields, and decisions. The [integration map](docs/INTEGRATIONS.md) shows what can be connected in Make and what needs a small adapter or a confirmed Bustem setup. The [Make setup](docs/MAKE.md) gives the routing steps. A [Claude skill](.claude/skills/bustem-bdr-call-ops/SKILL.md) is included for operators adapting this repo.
 
 ## Run the connected version locally
 
-1. Install Node 22 or later. Copy `.env.example` to `.env`.
+1. Install Node 22.13 or later. Copy `.env.example` to `.env`.
 2. Run `npm start` and open `http://127.0.0.1:8787`.
 3. Walk through the sample call. The local server creates `call.ended`, `call.approved`, and `report.ready` events in its outbox.
 4. To send events to Make, add a private custom webhook URL to `MAKE_WEBHOOK_URL`. Add `MAKE_WEBHOOK_KEY` if the Make webhook requires an API key. Demo events remain previews unless `ALLOW_DEMO_WEBHOOK=true`.
 5. To import completed calls from Parley, leave Parley open and run `npm run parley` in a second terminal. The watcher reads its local MCP endpoint and imports recordings whose titles begin with `Bustem`. Name them `Bustem | Brand name`. You can instead set `PARLEY_FOLDER_ID`. If the rep has verified them, Parley's meeting context can include `Contact email: buyer@brand.com` and `HubSpot contact ID: 12345`, each on its own line. Those fields allow the immediate Make event to attach to the right HubSpot record.
 
 The watcher does not record audio itself. It reads Parley's finished recordings through `list_recordings` and `get_recording`. Parley remains a separate app. The browser example is scripted because no customer calls belong in a public demo.
+
+The [browser preview](https://mazza-dev.github.io/bustem-bdr-call-desk/) runs the fictional call flow in browser storage. It does not connect to Parley, Make, HubSpot, or Bustem. The repo and local server are the integration sample.
 
 ## What the three events do
 

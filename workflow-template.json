@@ -1,0 +1,51 @@
+{
+  "name": "Bustem BDR call operations",
+  "purpose": "Keep completed calls, rep reviewed outcomes, HubSpot activities, and Oliver's daily report in sync.",
+  "timeZone": "Africa/Johannesburg",
+  "sources": {
+    "recording": "Parley local MCP or an approved dialer recording feed",
+    "contact": "BDR verified email or HubSpot contact ID",
+    "dialCount": "Separate dialer or CRM activity feed, not recording count"
+  },
+  "steps": [
+    {
+      "id": "capture",
+      "when": "A finished Bustem recording is imported",
+      "output": "call.ended",
+      "required": ["eventId", "callId", "recordingId", "source", "account", "endedAt"],
+      "action": "Send to Make as soon as the finished recording is available"
+    },
+    {
+      "id": "match",
+      "when": "Make receives call.ended",
+      "action": "Match an existing HubSpot contact using a verified ID or email; otherwise hold for review",
+      "doNotInfer": ["contact from transcript alone", "decision maker from job title alone"]
+    },
+    {
+      "id": "log",
+      "when": "A verified HubSpot contact is matched",
+      "action": "Create a HubSpot call activity and save its ID against callId"
+    },
+    {
+      "id": "review",
+      "when": "BDR approves the call notes",
+      "output": "call.approved",
+      "required": ["outcome", "issue", "nextStep", "reviewedAt"],
+      "action": "Update the HubSpot call and create a follow up task if required"
+    },
+    {
+      "id": "report",
+      "when": "18:00 Johannesburg time while the server is running",
+      "output": "report.ready",
+      "action": "Make sends Oliver the daily report through an approved destination",
+      "counts": ["capturedCalls", "reviewedCalls", "pendingReview", "meetingsBooked", "followUps", "notFit"],
+      "excludes": ["dial count without a dialer feed", "unapproved meeting claims"]
+    }
+  ],
+  "events": {
+    "call.ended": "ended:<source>:<recordingId>",
+    "call.approved": "approved:<callId>:<reviewVersion>",
+    "report.ready": "report:<Johannesburg date>"
+  },
+  "duplicateRule": "Store eventId in Make before creating a HubSpot activity or sending a report. A retry must not repeat the action."
+}
