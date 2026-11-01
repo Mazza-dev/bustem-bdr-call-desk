@@ -1,45 +1,33 @@
-# Bustem GTM 2: BDR call operations
+# Bustem GTM 2: BDR call desk demo
 
-A working repo by Tolani Lambe for Bustem's South Africa BDR team. It contains the call workflow, a Parley recording adapter, a Make webhook sender, a daily report, and the handoff material needed to adapt it to Bustem's tools. It uses fictional data by default.
+This is a demo of a proposed call workflow for Bustem's South Africa BDR team. It shows how a rep could review a completed call, prepare a CRM update, and give Oliver a current daily summary. Bustem has not connected a dialer, Parley, Make, HubSpot, or a reporting destination to this repository. The browser walkthrough uses a fictional call.
 
-## What happens
+## What the demo shows
 
-1. A BDR keeps discovery questions and next steps in view during a call. The sample walks through a fictional call.
-2. When a completed `Bustem` recording appears in Parley, the local adapter imports it and creates `call.ended`. The webhook sender can pass this event to Make immediately.
-3. Make can match a verified contact in HubSpot and create a call activity. Unmatched calls go to review instead of creating an unverified contact.
-4. The BDR checks the account, objection, outcome, and next step. Approval creates `call.approved`, which Make can use to update the HubSpot call and create a follow up task.
-5. Oliver's report updates from reviewed calls throughout the day. At 18:00 Johannesburg time, the running server creates `report.ready` for Make to deliver through the team's chosen channel.
+| Step | What works here | What is simulated or missing |
+| --- | --- | --- |
+| Call walkthrough | The browser reveals a scripted conversation and fixed prompts one line at a time. | This is not a live call, live transcription, or AI coaching. It does not listen to the BDR's dialer. |
+| Call record | The local server can store a call, avoid importing the same source recording twice, and create a `call.ended` event. | The sample call is fictional. No Bustem calls have been imported. |
+| Parley import | A local adapter is written to poll Parley's MCP endpoint for completed recordings and import those with a `Bustem` title or a chosen folder. | It has not been tested with Bustem's actual dialer, recording setup, or Parley account. It does not record audio itself or provide prompts during a live call. |
+| Rep review | The rep can check the account, issue, objection, outcome, and next step. Approval creates a `call.approved` event. | Sample answers are prefilled only for the fictional call. Real outcomes and identities must be checked by the rep. |
+| Make and HubSpot | The local server has a webhook sender with a retryable event outbox. The [Make guide](docs/MAKE.md) describes how to match a verified contact, create or update a HubSpot call, and create a task. | No Make scenario or HubSpot connection has been created in Bustem's accounts. These steps are instructions for a future setup, not actions the demo currently performs. |
+| Oliver's report | The local server calculates counts from calls stored in this tool and creates `report.ready` on request or at 18:00 Johannesburg time while the server is running. | The report is not sent to Oliver unless an authorized Make webhook and destination are configured. It cannot show total dial volume without the dialer's activity feed. |
 
-The [workflow template](workflow-template.json) names the events, required fields, and decisions. The [integration map](docs/INTEGRATIONS.md) shows what can be connected in Make and what needs a small adapter or a confirmed Bustem setup. The [Make setup](docs/MAKE.md) gives the routing steps. A [Claude skill](.claude/skills/bustem-bdr-call-ops/SKILL.md) is included for operators adapting this repo.
+The [browser preview](https://mazza-dev.github.io/bustem-bdr-call-desk/) runs entirely in browser storage. It has no Parley, Make, HubSpot, or Bustem connection. The local server demonstrates the event and report logic separately.
 
-## Run the connected version locally
+## Run the local demo
 
 1. Install Node 22.13 or later. Copy `.env.example` to `.env`.
 2. Run `npm start` and open `http://127.0.0.1:8787`.
-3. Walk through the sample call and approve its notes. The local server creates `call.ended` and `call.approved` in its outbox. Use **Send current report** to create `report.ready` before the scheduled time.
-4. To send events to Make, add a private custom webhook URL to `MAKE_WEBHOOK_URL`. Add `MAKE_WEBHOOK_KEY` if the Make webhook requires an API key. Demo events remain previews unless `ALLOW_DEMO_WEBHOOK=true`.
-5. To import completed calls from Parley, leave Parley open and run `npm run parley` in a second terminal. The watcher reads its local MCP endpoint and imports recordings whose titles begin with `Bustem`. Name them `Bustem | Brand name`. You can instead set `PARLEY_FOLDER_ID`. If the rep has verified them, Parley's meeting context can include `Contact email: buyer@brand.com` and `HubSpot contact ID: 12345`, each on its own line. Those fields allow the immediate Make event to attach to the right HubSpot record.
+3. Walk through the fictional call, end it, and approve the sample notes. The server creates `call.ended` and `call.approved` events in its outbox.
+4. Choose **Send current report** to create `report.ready`. Without a Make webhook, the events remain local. Demo events remain previews even with a webhook unless `ALLOW_DEMO_WEBHOOK=true` is explicitly set.
 
-The watcher does not record audio itself. It reads Parley's finished recordings through `list_recordings` and `get_recording`. Parley remains a separate app. The browser example is scripted because no customer calls belong in a public demo.
+The [workflow template](workflow-template.json) defines the three event types. The [integration map](docs/INTEGRATIONS.md) shows which connections need team access and which can be configured in Make. The [Make guide](docs/MAKE.md) gives the proposed HubSpot actions. The included [Claude skill](.claude/skills/bustem-bdr-call-ops/SKILL.md) helps adapt the workflow; it is not a live integration.
 
-The [browser preview](https://mazza-dev.github.io/bustem-bdr-call-desk/) runs the fictional call flow in browser storage. It does not connect to Parley, Make, HubSpot, or Bustem. The repo and local server are the integration sample.
+## Before using actual calls
 
-## What the three events do
+Test whether the approved dialer audio can be captured by Parley on the BDR's operating system. If it cannot, connect the dialer's own completed recording feed instead. Confirm the rep's consent and recording process, obtain authorized HubSpot and Make access, decide where Oliver's report should go, and test field matching with real but approved records. Unmatched contacts should stay in review. A recording count must never be presented as a dial count.
 
-| Event | When it is created | Suggested Make action |
-| --- | --- | --- |
-| `call.ended` | A completed Parley recording is imported | Match an existing HubSpot contact, then create a call record. Hold unmatched records for review. |
-| `call.approved` | The rep checks the account and outcome | Update that call and add the confirmed next step. |
-| `report.ready` | 18:00 Johannesburg time, or when the operator sends the current report | Deliver Oliver's daily summary through the team's chosen channel. The scheduled report is separate from any earlier manual send. |
+The local server listens on localhost by default. It must keep running for the scheduled report event. It is not ready to be exposed to a team without access controls, monitoring, and an agreed policy for retaining call data. Do not put recordings, customer data, webhook URLs, or credentials in this public repository.
 
-The [Make setup guide](docs/MAKE.md) gives the event fields, HubSpot routing, and duplicate rules. The local server must be running at 18:00 for the scheduled send. It computes the report on every page load, so the current view is available throughout the day.
-
-## Limits before using real calls
-
-- Bustem has not supplied a dialer, Parley installation, Make account, HubSpot connection, or real BDR data. The adapter and webhook sender are implemented but have not been connected to those accounts.
-- A recording count is not a dial count. Add the dialer's activity feed before reporting dial volume.
-- Parley's computer audio capture needs a test with the actual BDR dialer and operating system. Calls on a separate handset may not be captured.
-- The rep must verify prospect identity, outcome, and follow up. The app does not infer those from a transcript.
-- The server binds to localhost by default. Use approved access controls, recording consent, and secure hosting before team use. Do not put customer data or credentials in the public repository.
-
-Run `npm test` for event, duplicate, and report checks.
+Run `npm test` to check the event, duplicate, and report logic.
